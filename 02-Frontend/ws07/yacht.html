@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Yacht- javascript game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Yacht</h1>
+<div id=roll>
+    <button onclick="rollClicked()" id="rollButton">Roll</button>
+    <button class="dice" onclick="diceToggle(0)"></button>
+    <button class="dice" onclick="diceToggle(1)"></button>
+    <button class="dice" onclick="diceToggle(2)"></button>
+    <button class="dice" onclick="diceToggle(3)"></button>
+    <button class="dice" onclick="diceToggle(4)"></button>
+</div>
+<h2>Select :</h2>
+<div id=ones><button onclick="selectOnes()">Aces</button> Score: <span class="score">0</span></div>
+<div id=twos><button onclick="selectTwos()">Twos</button> Score: <span class="score">0</span></div>
+<div id=three><button onclick="selectThree()">Threes</button> Score: <span class="score">0</span></div>
+<div id=fours><button onclick="selectFours()">Fours</button> Score: <span class="score">0</span></div>
+<div id=fives><button onclick="selectFives()">Fives</button> Score: <span class="score">0</span></div>
+<div id=sixes><button onclick="selectSixes()">Sixes</button> Score: <span class="score">0</span></div>
+<div id=fullHouse><button onclick="selectFullHouse()">Full House</button> Score: <span class="score">0</span></div>
+<div id=fourSame><button onclick="selectFourKind()">Four of a kind</button> Score: <span class="score">0</span></div>
+<div id=littleStraight><button onclick="selectLittle()">Small Straight</button> Score: <span class="score">0</span></div>
+<div id=bigStraight><button onclick="selectBig()">Large Stright</button> Score: <span class="score">0</span></div>
+<div id=choice><button onclick="selectChoice()">Choice</button> Score: <span class="score">0</span></div>
+<div id=yacht><button onclick="selectYacht()">Yacht</button> Score: <span class="score">0</span></div>
+<div id=total><h3>Total: <span class="score">0</span></h3></div>
+<div class=gameover>
+    <h1>GAME!!</h1>
+    <button onclick="resetGame()">Play again!!</button>
+</div>
+<script src="./dice.js"></script> 
+<script src="./scoring.js"></script> 
+<script src="./yacht.js"></script>
+</body>
+</html> 

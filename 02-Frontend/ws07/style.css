@@ -1,0 +1,21 @@
+button {
+    width: 128px;
+}
+.dice {
+    height: 48px;
+    width: 48px;
+    border: 0;
+    background-color: white;
+    padding: none;
+    margin: none;
+    background-size: cover;
+}
+.gameover {
+    width: fit-content;
+    text-align: center;
+    color: crimson;
+    border: 3px solid crimson;
+    padding: 10px;
+    margin: auto;
+    display: none;
+}

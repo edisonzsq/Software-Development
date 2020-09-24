@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Yacht- javascript game</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="./yacht.js"></script>
+</head>
+<body>
+
+<h1>Yacht</h1>
+<div id=roll>
+    <button id="rollbutton">Roll</button>
+    <button class="dice"></button>
+    <button class="dice"></button>
+    <button class="dice"></button>
+    <button class="dice"></button>
+    <button class="dice"></button>
+</div>
+
+<div id=select>
+    <div id=ones><button class="scoresame scorebutton">Aces</button> Score: <span class="score">0</span></div>
+    <div id=twos><button class="scoresame scorebutton">Twos</button> Score: <span class="score">0</span></div>
+    <div id=three><button class="scoresame scorebutton">Threes</button> Score: <span class="score">0</span></div>
+    <div id=fours><button class="scoresame scorebutton">Fours</button> Score: <span class="score">0</span></div>
+    <div id=fives><button class="scoresame scorebutton">Fives</button> Score: <span class="score">0</span></div>
+    <div id=sixes><button class="scoresame scorebutton">Sixes</button> Score: <span class="score">0</span></div>
+    <div id=fullHouse><button class="scorekind scorebutton">Full House</button> Score: <span class="score">0</span></div>
+    <div id=fourSame><button class="scorekind scorebutton">Four of a kind</button> Score: <span class="score">0</span></div>
+    <div id=littleStraight><button class="scorestraight scorebutton">Little Straight</button> Score: <span class="score">0</span></div>
+    <div id=bigStraight><button class="scorestraight scorebutton">Big Stright</button> Score: <span class="score">0</span></div>
+    <div id=choice><button class="scorechoice scorebutton">Choice</button> Score: <span class="score">0</span></div>
+    <div id=yacht><button class="scoreyacht scorebutton">Yacht</button> Score: <span class="score">0</span></div>
+</div>
+
+<div id=total><h3>Total: <span>0</span></h3></div>
+
+<div class=gameover>
+    <h1>GAME!!</h1>
+    <button id="resetgame">Play again!!</button>
+</div>
+
+</body>
+</html> 
