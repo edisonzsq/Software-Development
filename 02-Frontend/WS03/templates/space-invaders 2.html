@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Space Invaders (JQuery)</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style type="text/css">
+#draw-target {
+	width:480px;
+	height:384px;
+	background-color:#000;
+	position:relative;
+	color:#FFF;
+	font-size:16px;
+	font-family:"Courier New", Courier, monospace;
+	font-weight:bold;
+	letter-spacing:1px;
+}
+.message {
+	margin-left: auto;
+	margin-right: auto;
+	padding-top:32px;
+	text-align:center;
+}
+#score {
+	position:absolute;
+}
+#highScore {
+	position:absolute;
+}
+#lives {
+	text-align:center;
+}
+</style>
+<script type="text/javascript">
+
+$(document).ready(function() { // ***** Start of game script *****
+
+try {
+    document.execCommand("BackgroundImageCache", false, true);
+} catch(err) {};
+
+const PLAYER = 1,
+    LASER = 2,
+    ALIEN = 4,
+    ALIEN_BOMB = 8,
+    SHIELD = 16,
+    TOP_OF_SCREEN = 64,
+    TANK_Y = 352 - 16,
+    SHIELD_Y = TANK_Y - 56,
+    SCREEN_WIDTH = 480,
+    SCREEN_HEIGHT = 384,
+    ALIEN_COLUMNS = 11,
+    ALIEN_ROWS = 5,
+    SPRITE_WIDTH = 32,
+    SPRITE_HEIGHT = 32,
+    SPRITE_IMAGE_WIDTH = 224,
+    SPRITE_IMAGE = 'invaders.png';
+var SYS_process,
+    SYS_collisionManager,
+    $drawTarget = $('#draw-target');
+
+// Key event
+var keys = function (){
+    var keyMap = {  '37': 'left',
+                    '39': 'right',
+                    '32': 'fire' 
+                },
+        kInfo = {   'left': 0,
+                    'right': 0,
+                    'fire': 0    
+                },
+        key;
+    $(document).bind('keydown keyup', function (event) {
+        key = '' + event.which;
+        console.log(key);
+        if (keyMap[key] !== undefined) {
+            kInfo[keyMap[key]] = event.type === 'keydown' ? 1 : 0;
+            return false;
+        }
+    });
+    return kInfo;
+}();
+
+var processor = function () {
+    var processList,
+        addedItems;
+    return {
+        add: function (obj) {},
+        process: function () {}
+    };
+};
+
+var collisionManager = function() {
+    var index, // Such collision objects have unique id
+        collideeGrid, // TODO: Set
+        colliderObjs, // TODO: Set
+        gridWidth,    // TODO: Set
+        gridHeight;   // TODO: Set
+
+    // TODO: Initialise grid
+
+    var getGridObjs = function (x, y) {},
+        checkCollision = function(offsetX, offsetY, colliderObj) {};
+    return {
+        newCollision: function(colliderFlag, collideeFlags, width, height, callback) {
+            var gridObjs,
+                id; // TODO: reference to grid's object
+            var collissionObj = {
+                colliderFlag: colliderFlag,
+                collideeFlags: collideeFlags,
+                halfWidth: width / 2,
+                halfHeight: height / 2,
+                centerX: 0,
+                centerY: 0,
+                update: function (x, y) {},
+                remove: function() {},
+                callback: function (flag) {}
+            }
+            // TODO: Add collidee to grid
+
+            return collissionObj;
+        },
+        checkCollisions: function() {
+            var idx, collisionObj;
+            // TODO: Loop through to check boundary grid boxes
+
+        }
+    };
+};
+
+class DHTMLSprite {
+    constructor(x, y, frame) {
+        this.width; // TODO: Set
+        this.height;
+        this.imagesWidth; // TODO: Set
+        this.$element; // TODO: Set
+        this.elemStyle; // TODO: Set
+        this.$element.css({});
+        // TODO: Initialise object
+    }
+    draw(x, y) {}
+    changeImage(index) { 
+        // TODO: changes the selected sprite image by its index
+    }
+    show() {}
+    hide() {}
+    destroy() {}
+}
+
+var alien = function (x, y, frame, points, alienCallback) {
+    var animFlag = 0,
+        that, // TODO: New Sprite object
+        collision, 
+        collisionWidth; // TODO: Set
+
+    // TODO: Initialise canFire flag for alien sprite
+
+    that.hitCallback = function (colliderFlag) {};
+
+    if (frame === 2) {
+        collisionWidth = 22;
+    }
+    else if (frame === 4) {
+        collisionWidth = 25;
+    }
+    // TODO: Create collision object
+
+    that.move = function (dx, dy) {};
+    that.getXY = function () {};
+    return that;
+};
+
+var alienManager = function (gameCallback, startY) {
+    var aliensTable, // TODO: Set
+        aliensFireList, // TODO: Set
+        dx, // TODO: Set
+        dy, // TODO: Set
+        images, // TODO: Set
+        scores, // TODO: Set
+        timeLastAlienMoved, // TODO: Initialise time
+        fps, // TODO: Set
+        moveIndex,
+        changeDir, // TODO: Set
+        waitFire, // TODO: Set
+        hitFunc = function (points) {};
+
+    // Loop through to create aliens
+
+    manager = {
+        move: function() {}
+    }
+
+    // TODO: Add to process manager
+};
+
+var alienBomb = function(x, y, removedCallback) {
+    var bomb, // TODO: New Sprite object
+        timeLastBomb, 
+        collision,
+        fps; // TODO: Set
+
+    bomb.hitCallback = function() {};
+    bomb.move = function() {};
+
+    // TODO: Create collision object
+    // TODO: Add to process manager
+};
+
+var shieldBrick = function (x, y, frame){
+    var brick, // TODO: New Sprite object
+    collision,
+    hitFunction = function () {};
+    // TODO: Create collision object
+
+    // TODO: Update collision and sprite objects
+};
+
+class Shield {
+    constructor(x, y) {
+        this.x; // TODO: Set
+        this.y; // TODO: Set
+        this.brickLayout = [
+            1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 6, 7, 0, 0, 8, 9, 3, 3, 3,
+            3, 3, 3, 0, 0, 0, 0, 0, 0, 3, 3, 3];
+        // TODO: Loop through to create shield
+    }
+};
+
+var tank = function (gameCallback) {
+    var x = ((SCREEN_WIDTH / 2) - 160),
+	    canFire, // TODO: Set
+        collision,
+        waitFireRelease, // TODO: Set
+        that;  // TODO: New Sprite object
+
+    that.canFire = function () {};
+    that.move = function () {};
+    that.hitCallback = function() {};
+
+    // TODO: Create collision object
+    // TODO: Add to process manager
+};
+
+var laser = function (x, y, removedCallback) {
+    var that, // TODO: New Sprite object
+        collision;
+
+    that.hitCallback = function (collideeFlags) {};
+    that.move = function () {};
+
+    // TODO: Create collision object
+    // TODO: Add to process manager
+};
+
+// ***** The Game !!! *****
+var game = function () {
+    var aliens,
+        gameState = 'titleScreen',
+        aliensStartY,
+        lives,
+        score, // TODO: Set
+        highScore, // TODO: Set
+        extraLifeScore, // TODO: Set
+        gameOverFlag = false,
+        startText =
+            '<div class="message">' +
+            '<p>SPACE INVADERS</p>' +
+            '<p>Press FIRE to Start</p>' +
+            '<p>Left = LEFT</p>' +
+            '<p>Right = RIGHT</p>' +
+            '<p>Space = FIRE</p>' +
+            '<p>EXTRA TANK EVERY 5000 POINTS</p>' +
+            '</div>',
+    updateScores = function () {},
+    initShields = function () {},
+    gameCallback = function (messageObj) {},
+    init = function () {
+        $("#draw-target").children().remove();
+    },
+    gameOver =  function() {
+        gameOverFlag = true;
+        $("#draw-target").children().remove();
+        $("#draw-target").append('<div class="message">' + 
+            '<p>*** GAME OVER ***</p></div>' + startText);
+        gameState = 'titleScreen';
+    },
+    gameLoop = function () {
+        switch (gameState) {
+            case 'playing':
+                if (keys.fire) {
+                    keys.fire = 0;
+                    gameOver();
+                };
+                break;
+
+            case 'titleScreen':
+                if (keys.fire) {
+                    gameOverFlag = false;
+                    keys.fire = 0;
+                    gameState = 'playing';
+                    init();
+                };
+                break;
+        }
+        setTimeout(gameLoop, 5);
+    };
+
+    $("#draw-target").append(startText);
+    gameLoop();
+}();
+
+}); // ***** End of game script *****
+</script>
+</head>
+<body>
+<p> DHTML Demonstration. Space Invaders. </p>
+<div id="draw-target"> </div>
+</body>
+</html>

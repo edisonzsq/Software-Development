@@ -1,0 +1,487 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Space Invaders (JQuery)</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style type="text/css">
+#draw-target {
+	width:480px;
+	height:384px;
+	background-color:#000;
+	position:relative;
+	color:#FFF;
+	font-size:16px;
+	font-family:"Courier New", Courier, monospace;
+	font-weight:bold;
+	letter-spacing:1px;
+}
+.message {
+	margin-left: auto;
+	margin-right: auto;
+	padding-top:32px;
+	text-align:center;
+}
+#score {
+	position:absolute;
+}
+#highScore {
+	position:absolute;
+}
+#lives {
+	text-align:center;
+}
+</style>
+<script type="text/javascript">
+
+$(document).ready(function() { // ***** Start of game script *****
+
+try {
+    document.execCommand("BackgroundImageCache", false, true);
+} catch(err) {};
+
+const PLAYER = 1,
+    LASER = 2,
+    ALIEN = 4,
+    ALIEN_BOMB = 8,
+    SHIELD = 16,
+    TOP_OF_SCREEN = 64,
+    TANK_Y = 352 - 16,
+    SHIELD_Y = TANK_Y - 56,
+    SCREEN_WIDTH = 480,
+    SCREEN_HEIGHT = 384,
+    ALIEN_COLUMNS = 11,
+    ALIEN_ROWS = 5,
+    SPRITE_WIDTH = 32,
+    SPRITE_HEIGHT = 32,
+    SPRITE_IMAGE_WIDTH = 224,
+    SPRITE_IMAGE = 'invaders.png';
+var SYS_process,
+    SYS_collisionManager,
+    $drawTarget = $('#draw-target');
+
+// Key event
+var keys = function (){
+    var keyMap = {  '37': 'left',
+                    '39': 'right',
+                    '32': 'fire' 
+                },
+        kInfo = {   'left': 0,
+                    'right': 0,
+                    'fire': 0    
+                },
+        key;
+    $(document).bind('keydown keyup', function (event) {
+        key = '' + event.which;
+        if (keyMap[key] !== undefined) {
+            kInfo[keyMap[key]] = event.type === 'keydown' ? 1 : 0;
+            return false;
+        }
+    });
+    return kInfo;
+}();
+
+var processor = function () {
+    var processList = [],
+        addedItems = [];
+    return {
+        add: function (obj) {
+            addedItems.push(obj);
+        },
+        process: function () {
+            var newProcessList = [],
+            len = processList.length;
+            for (var i = 0; i < len; i++) {
+                if (!processList[i].removed) {
+                    processList[i].move();
+                    newProcessList.push(processList[i]);
+                }
+            }
+            processList = newProcessList.concat(addedItems);
+            addedItems = [];
+        }
+    };
+};
+
+var collisionManager = function() {
+    var index, // Such collision objects have unique id
+        collideeGrid, // TODO: Set
+        colliderObjs, // TODO: Set
+        gridWidth,    // TODO: Set
+        gridHeight;   // TODO: Set
+
+    // TODO: Initialise grid
+
+    var getGridObjs = function (x, y) {},
+        checkCollision = function(offsetX, offsetY, colliderObj) {};
+    return {
+        newCollision: function(colliderFlag, collideeFlags, width, height, callback) {
+            var gridObjs,
+                id; // TODO: reference to grid's object
+            var collissionObj = {
+                colliderFlag: colliderFlag,
+                collideeFlags: collideeFlags,
+                halfWidth: width / 2,
+                halfHeight: height / 2,
+                centerX: 0,
+                centerY: 0,
+                update: function (x, y) {},
+                remove: function() {},
+                callback: function (flag) {}
+            }
+            // TODO: Add collidee to grid
+
+            return collissionObj;
+        },
+        checkCollisions: function() {
+            var idx, collisionObj;
+            // TODO: Loop through to check boundary grid boxes
+
+        }
+    };
+};
+
+class DHTMLSprite {
+    constructor(x, y, frame) {
+        this.width = SPRITE_WIDTH;
+        this.height = SPRITE_HEIGHT;
+        this.imagesWidth = SPRITE_IMAGE_WIDTH;
+        this.$element = $drawTarget.append('<div/>').find(':last');
+        this.elemStyle = this.$element[0].style;
+        this.$element.css({
+            position: 'absolute',
+            left: -9990,
+            width: this.width,
+            height: this.height,
+            backgroundImage: 'url(' + SPRITE_IMAGE + ')'
+        });
+        this.changeImage(frame);
+        this.draw(x,y);
+    }
+    draw(x, y) {
+        this.elemStyle.left = x + 'px';
+        this.elemStyle.top = y + 'px';
+    }
+    changeImage(index) { 
+        index *= this.width;
+        var vOffset = -Math.floor(index / this.imagesWidth) * this.height;
+        var hOffset = -index % this.imagesWidth;
+        this.elemStyle.backgroundPosition = hOffset + 'px ' + vOffset + 'px';
+    }
+    show() {
+        this.elemStyle.display = 'block';
+    }
+    hide() {
+        this.elemStyle.display = 'none';
+    }
+    destroy() {
+        this.$element.remove();
+    }
+}
+
+var alien = function (x, y, frame, points, alienCallback) {
+    var animFlag = 0,
+        that = new DHTMLSprite(x, y, frame),
+        canFire = false,
+        collision,
+        collisionWidth = 16;
+
+    that.hitCallback = function (colliderFlag) {};
+
+    if (frame === 2) {
+        collisionWidth = 22;
+    }
+    else if (frame === 4) {
+        collisionWidth = 25;
+    }
+    // TODO: Create collision object
+
+    that.move = function (dx, dy) {
+        that.changeImage(frame + animFlag);
+        animFlag ^= 1;
+        x += dx;
+        y += dy;
+        that.draw(x, y);
+
+        // TODO: Create collision object to check against SHIELD if y > SHIELD
+
+        // Check if change in direction
+        if ((dx > 0 && x >= SCREEN_WIDTH - 32 - 16) || (dx < 0 && x <= 16)) {
+            return true;
+        }
+
+        return false;
+    };
+    that.getXY = function () {
+        return {
+            x: x,
+            y: y
+        };
+    };
+    return that;
+};
+
+var alienManager = function (gameCallback, startY) {
+    var aliensTable = [],
+        aliensFireList = [],
+        dx = 4,
+        dy = 0,
+        images = [0, 2, 2, 4, 4],
+        scores, // TODO: Set
+        timeLastAlienMoved = Date.now(),
+        fps = 60,
+        moveIndex,
+        changeDir = false,
+        waitFire = false,
+        alienCallback = function (points) {};
+
+    // Loop through to create aliens
+    for (var y = 0; y < ALIEN_ROWS; y++) {
+        for (var x = 0; x < ALIEN_COLUMNS; x++) {
+            var anAlien = alien((x * 32) + 16, (y * 32) + startY, images[y],
+                0, null); // TODO: Update
+            aliensTable.push(anAlien);
+            if (y == (ALIEN_ROWS - 1)) {
+                aliensTable[aliensTable.length - 1].canFire = true;
+            }
+        }
+    };
+    moveIndex = aliensTable.length - 1;
+    
+    manager = {
+        move: function() {
+            if (!aliensTable.length) {
+                fps+=2;
+                gameCallback({
+                    message: 'allAliensKilled'
+                });
+                return false;
+            }
+            if ((Date.now() - timeLastAlienMoved) < (1000 / fps)) {
+                return false;
+            }
+            timeLastAlienMoved = Date.now();
+            var anAlien = aliensTable[moveIndex];
+
+            if (anAlien.removed) {
+                for (var i = aliensTable.length - 1; i >= 0; i--) {
+                    if (aliensTable[i].getXY().x === anAlien.getXY().x &&
+                        i !== moveIndex) {
+                        if (i < moveIndex) {
+                            aliensTable[i].canFire = true;
+                        }
+                        break;
+                    }
+                }
+                aliensTable.splice(moveIndex, 1);
+                moveIndex--;
+                if (moveIndex === -1) {
+                    moveIndex = aliensTable.length - 1;
+                }
+                return;
+            }
+
+            // Add bottom alien to a list for randomised fire
+            if (anAlien.canFire) {
+                aliensFireList.push(anAlien);
+            }
+
+            // Check for change in horizontal direction when aliens move down
+            var dx2 = dy ? 0 : dx;
+            if (anAlien.move(dx2, dy)) {
+                changeDir = true;
+            }
+            if (anAlien.getXY().y >= TANK_Y) {
+                gameCallback({
+                    message: 'aliensAtBottom'
+                });
+                return false;
+            }
+            moveIndex--;
+            if (moveIndex === -1) {
+                moveIndex = aliensTable.length - 1;
+                dy = 0;
+                if (changeDir === true) {
+                    dx = -dx;
+                    changeDir = false;
+                    dy = 16;
+                }
+                if (!waitFire) {
+                    var fireAlien = aliensFireList[Math.floor(Math.random() *
+                        (aliensFireList.length))];
+                    var xy = fireAlien.getXY();
+                    alienBomb(xy.x, xy.y, function () {
+                            waitFire = false;
+                        });
+                    aliensFireList = [];
+                    waitFire = true;
+                }
+            }
+            return true;
+        }
+    }
+    SYS_process.add(manager);
+};
+
+var alienBomb = function(x, y, removedCallback) {
+    var bomb = new DHTMLSprite(x, y, 19),
+        timeLastBomb = 0, 
+        collision,
+        fps = 200;
+
+    bomb.hitCallback = function() {
+        bomb.destroy();
+        bomb.removed = true;
+        removedCallback();
+        // TODO: update collision
+    };
+    bomb.move = function() {
+        if ((Date.now() - timeLastBomb) < (1000 / fps)) {
+            return;
+        }
+        timeLastBomb = Date.now();
+        y += 1;
+        bomb.draw(x, y);
+        // TODO: Collision check update
+        if (y >= TANK_Y) {
+            bomb.hitCallback();
+        }
+    };
+
+    // TODO: Create collision object
+    SYS_process.add(bomb);
+};
+
+var shieldBrick = function (x, y, frame){
+    var brick = new DHTMLSprite(x, y, frame),
+    collision,
+    hitFunction = function () {};
+    // TODO: Create collision object
+    brick.removed = false;
+
+    // TODO: Update collision and sprite objects
+};
+
+class Shield {
+    constructor(x, y) {
+        this.brickLayout = [
+            1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 6, 7, 0, 0, 8, 9, 3, 3, 3,
+            3, 3, 3, 0, 0, 0, 0, 0, 0, 3, 3, 3];
+        for (var i = 0; i < this.brickLayout.length; i++) {
+            if (this.brickLayout[i]) {
+                shieldBrick( x + ((i % 12) * 4), 
+                    y + (Math.floor(i / 12) * 8),
+                    this.brickLayout[i] + 8);
+            }
+        }
+    }
+};
+
+var tank = function (gameCallback) {
+    var x = ((SCREEN_WIDTH / 2) - 160),
+	    canFire, // TODO: Set
+        collision,
+        waitFireRelease, // TODO: Set
+        that; // TODO: New Sprite object
+    
+
+    that.canFire = function () {};
+    that.move = function () {};
+    that.hitCallback = function() {};
+
+    // TODO: Create collision object
+    // TODO: Add to process manager
+};
+
+var laser = function (x, y, removedCallback) {
+    var that, // TODO: New Sprite object
+        collision;
+
+    that.hitCallback = function (collideeFlags) {};
+    that.move = function () {};
+
+    // TODO: Create collision object
+    // TODO: Add to process manager
+};
+
+// ***** The Game !!! *****
+var game = function () {
+    var aliens,
+        gameState = 'titleScreen',
+        aliensStartY,
+        lives,
+        score, // TODO: Set
+        highScore, // TODO: Set
+        extraLifeScore, // TODO: Set
+        gameOverFlag = false,
+        startText =
+            '<div class="message">' +
+            '<p>SPACE INVADERS</p>' +
+            '<p>Press FIRE to Start</p>' +
+            '<p>Left = LEFT</p>' +
+            '<p>Right = RIGHT</p>' +
+            '<p>Space = FIRE</p>' +
+            '<p>EXTRA TANK EVERY 5000 POINTS</p>' +
+            '</div>',
+    updateScores = function () {},
+    initShields = function () {
+        for (var x = 0; x < 4; x++) {
+            new Shield((SCREEN_WIDTH / 2) - 192 + 12 + (x * 96), SHIELD_Y);
+        }
+    },
+    gameCallback = function (messageObj) {
+        if (gameOverFlag) {
+            return;
+        }
+        switch (messageObj.message) {
+            case 'aliensAtBottom':
+                gameOver();
+                break;
+        }
+    },
+    init = function () {
+        $("#draw-target").children().remove();
+        SYS_process = processor();
+        aliens = alienManager(gameCallback, aliensStartY);
+        initShields();
+    },
+    gameOver =  function() {
+        gameOverFlag = true;
+        $("#draw-target").children().remove();
+        $("#draw-target").append('<div class="message">' + 
+            '<p>*** GAME OVER ***</p></div>' + startText);
+        gameState = 'titleScreen';
+    },
+    gameLoop = function () {
+        switch (gameState) {
+            case 'playing':
+                SYS_process.process();
+                break;
+
+            case 'titleScreen':
+                if (keys.fire) {
+                    gameOverFlag = false;
+                    keys.fire = 0;
+                    aliensStartY = 64;
+                    gameState = 'playing';
+                    init();
+                };
+                break;
+        }
+        setTimeout(gameLoop, 5);
+    };
+
+    $("#draw-target").append(startText);
+    gameLoop();
+}();
+
+}); // ***** End of game script *****
+</script>
+</head>
+<body>
+<p> DHTML Demonstration. Space Invaders. </p>
+<div id="draw-target"> </div>
+</body>
+</html>
