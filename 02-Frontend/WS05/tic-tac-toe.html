@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+<script type="text/babel">
+
+class Square extends React.Component {
+  render() {
+    return (
+      <button className="square">
+        {/* TODO */}
+      </button>
+    );
+  }
+}
+
+class Board extends React.Component {
+  renderSquare(i) {
+    return <Square />;
+  }
+
+  render() {
+    // Status
+    return (
+      <div>
+        <div>{/* status */}</div>
+        <div>{/* 9x9 Squares */}</div>
+      </div>
+    );
+  }
+}
+
+class Game extends React.Component {
+  render() {
+    return (
+      <div className="game">
+        <div className="game-board">
+          <Board />
+        </div>
+        <div className="game-info">
+          <div>{/* status */}</div>
+        </div>
+        <div className="game-reset">
+        </div>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <h1>Tic-Tac-Toe</h1>,
+  document.getElementById('root')
+);
+
+</script>
+  </body>
+</html>
