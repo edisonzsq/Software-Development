@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GitHub User</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+<script type="text/babel">
+
+function useFetch(uri) {
+  const [data, setData] = React.useState();
+  const [error, setError] = React.useState();
+  const [loading, setLoading] = React.useState(true);
+  
+  React.useEffect(() => {
+    if (!uri)return;
+    fetch(uri)
+        .then(data => data.json())
+        .then(setData)
+        .then(() => setLoading(false))
+        .catch(console.errr);
+      }, [uri]);
+
+  return {
+    loading,
+    data,
+    error
+  }
+}
+
+function Fetch({
+  uri,
+  renderSuccess,
+  loadingFallback = <p>loading...</p>,
+  renderError = error => <pre>{JSON.stringify(error, null, 2)}</pre>
+}) {
+  const { loading, data, error } = useFetch(uri);
+  if (loading) return loadingFallback;
+  if (error) return renderError(error);
+  if (data) return renderSuccess({ data });
+}
+
+const useIterator = (items = [], initialValue = 0) => {
+  const [i, setIndex] = React.useState(initialValue);
+
+  const prev = React.useCallback(() => {
+    if (i === 0) return setIndex(items.length - 1);
+    setIndex(i - 1);
+  }, [i]);
+
+  const next = React.useCallback(() => {
+    if (i === items.length - 1) return setIndex(0);
+    setIndex(i + 1);
+  }, [i]);
+
+  const item = React.useMemo(() => items[i], [i]);
+
+  return [item || items[0], prev, next];
+};
+
+function RepoMenu({ repositories, onSelect = f => f }) {
+  const [{ name }, previous, next] = useIterator(repositories);
+
+  React.useEffect(() => {
+    if (!name) return;
+    onSelect(name);
+  }, [name]);
+
+  return (
+    <div style={{ display: "flex" }}>
+      <button onClick={previous}>&lt;</button>
+      <p>{name}</p>
+      <button onClick={next}>&gt;</button>
+    </div>
+  );
+}
+
+function UserRepositories({ login, selectedRepo, onSelect = f => f }) {
+  return (
+    <Fetch
+      uri={`https://api.github.com/users/${login}/repos`}
+      renderSuccess={({ data }) => (
+        <RepoMenu
+          repositories={data}
+          selectedRepo={selectedRepo}
+          onSelect={onSelect}
+        />
+      )}
+    />
+  );
+}
+
+function UserDetails({ data }) {
+  return (
+    <div className="githubUser">
+      <img src={data.avatar_url} alt={data.login} style={{ width: 200 }} />
+      <div>
+        <h1>{data.login}</h1>
+        {data.name && <p>{data.name}</p>}
+        {data.location && <p>{data.location}</p>}
+      </div>
+      <UserRepositories
+        login={data.login}
+        onSelect={repoName => console.log(`${repoName} selected`)}
+      />
+    </div>
+  );
+}
+
+function GitHubUser({ login }) {
+  return (
+    <Fetch
+      uri={`https://api.github.com/users/${login}`}
+      renderSuccess={UserDetails}
+    />
+  );
+}
+
+//------------------------------------------------------------------------------------
+
+ReactDOM.render(
+  <GitHubUser login="" />,
+  document.getElementById('root')
+);
+</script>
+  </body>
+</html>

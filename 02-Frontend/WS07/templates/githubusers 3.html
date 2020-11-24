@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GitHub User</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+<script type="text/babel">
+
+const loadJSON = key => key && JSON.parse(localStorage.getItem(key));
+const saveJSON = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+function GitHubUser({ login }) {
+  const [data, setData] = React.useState(loadJSON(`user:${login}`));
+
+  React.useEffect(() => {
+    if(!data) return;
+    if(data.login === login) return;
+    const {name, avatar_url, location} = data;
+    saveJSON(`user:${login}`, {
+      name,
+      login,
+      avatar_url,
+      location
+    });
+  }, [data]);
+
+  React.useEffect(() => {
+    if(!login) return;
+    fetch(`https://api.github.com/users/${login}`)
+      .then(response => response.json())
+      .then(setData)
+      .catch(console.error);
+  }, [login]);
+
+  if(data)
+    return <pre>{JSON.stringify(data, null, 2)}</pre>;
+
+  return null;
+}
+
+//------------------------------------------------------------------------------------
+
+ReactDOM.render(
+  <GitHubUser login="" />,
+  document.getElementById('root')
+);
+</script>
+  </body>
+</html>
